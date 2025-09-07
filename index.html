@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panda Tools</title>
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+  <style>
+    body { margin:0; font-family: Arial, sans-serif; background:#f4f4f4; color:#333; transition:0.3s; }
+    header { display:flex; align-items:center; justify-content:space-between; padding:10px 20px; background:#000; color:#fff; position:fixed; top:0; width:100%; z-index:1000; }
+    .logo { display:flex; align-items:center; cursor:pointer; }
+    .logo img { height:40px; margin-right:8px; }
+   /* overlay */
+    .overlay1 {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    /* box popup */
+    .popup {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      animation: zoomIn 0.3s ease;
+    }
+
+    /* animasi */
+    @keyframes zoomIn {
+      from { transform: scale(0.7); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .popup button {
+      margin-top: 15px;
+      padding: 8px 15px;
+      background: #111;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    /* Tombol hamburger */
+    .hamburger { width:20px; height:18px; display:flex; flex-direction:column; justify-content:space-between; cursor:pointer; z-index:3001;
+    margin-right:35px; }
+    .hamburger span { display:block; height:4px; width:100%; background:#fff; border-radius:2px; transition:0.3s; }
+
+    /* Menu */
+    .menu { position:fixed; top:0; right:-100%; width:260px; height:100%; background:#222; color:#fff; transition:0.3s; padding:20px; z-index:3000; display:flex; flex-direction:column; 
+    }
+        .menu a {
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: color 0.3s;
+    }
+
+    .menu a:hover {
+      color: #2F03CE; 
+    }
+    .menu.active { right:0; }
+    .menu a { display:block; color:#fff; text-decoration:none; margin:12px 0; font-size:18px; }
+ 
+    /* Daftarkan font custom */
+    @font-face {
+      font-family: 'DihilFont'; /* kasih nama bebas */
+      src: url('Dihil.ttf') format('truetype');
+    }
+        @font-face {
+      font-family: 'oupsfont'; /* kasih nama bebas */
+      src: url('Oups.otf') format('truetype');
+    }
+        @font-face {
+      font-family: 'vanilafont'; /* kasih nama bebas */
+      src: url('Vanilla Whale.otf') format('truetype');
+    }
+        @font-face {
+      font-family: 'tendang'; /* kasih nama bebas */
+      src: url('Tendang.ttf') format('truetype');
+    }
+        /* Class khusus untuk font ini */
+    .dihil {
+      font-family: 'DihilFont', sans-serif;
+      font-size: 12px;
+      color: white;
+    }
+    .dihil1 {
+      font-family: 'DihilFont', sans-serif;
+      font-size: 22px;
+      color: black;
+    }
+       .oups {
+      font-family: 'oupsfont', sans-serif;
+      font-size: 30px;
+      color: black;
+    }
+       .tendang {
+      font-family: 'tendang', sans-serif;
+      font-size: 18px;
+      color: black;
+    }
+           .tendang2 {
+      font-family: 'tendang', sans-serif;
+      font-size: 12px;
+      color: white;
+    }
+       .vanila {
+      font-family: 'vanilafont', sans-serif;
+      font-size: 22px;
+      color: white;
+    }
+    /* Overlay */
+    .overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:none; z-index:2500; }
+    .overlay.active { display:block; }
+
+    /* Slider */
+ .slider {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  margin-top: 60px;
+}
+
+.slides {
+  display: flex;
+  width: 300%;
+  height: 100%;
+  transition: transform 0.5s ease-in-out;
+}
+
+.slide {
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.slide img {
+  width: 35%;
+  height: 200px;
+  object-fit: cover;
+}
+
+/* Dots indikator */
+.dots {
+  position: absolute;
+  bottom: 10px;
+  width: 100%;
+  text-align: center;
+}
+
+.dots span {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin: 0 5px;
+  background: #fff;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.dots span.active {
+  background: #777;
+}
+
+    .home, .tool-page, .about, .contact, .history, .removebg { display:none; padding:20px; margin-top:20px; }
+    .active-page { display:block; }
+
+    /* Grid menu */
+    .menu-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:20px; margin-top:20px; }
+    .menu-box { background:#fff; border-radius:12px; padding:15px; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,0.2); cursor:pointer; transition:0.2s; }
+    .menu-box:hover { transform:translateY(-5px); }
+    .menu-box img { width:80px; height:80px; object-fit:contain; margin-bottom:10px; }
+.about h2 {
+  text-align: center; /* bikin judul rata tengah */
+  margin-bottom: 20px;
+  font-size: 50px;
+}
+
+.about .box {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  max-width: 600px;
+  margin: 0 auto; /* biar boxnya ke tengah */
+  text-align: center;
+}
+    /* Tombol */
+    .back-btn { background:#111; color:#fff; border:none; padding:10px 15px; border-radius:8px; cursor:pointer; margin-top:20px; }
+    .url-box { display:flex; gap:10px; margin-top:15px; }
+    .url-box input { flex:1; padding:10px; border:1px solid #ccc; border-radius:8px; }
+    .url-box button { padding:10px 15px; background:#111; color:#fff; border:none; border-radius:8px; cursor:pointer; }
+
+    .result { margin-top:20px; background:#fff; padding:15px; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.2); }
+    .result img { max-width:100%; border-radius:12px; margin-bottom:10px; }
+    .download-btn { display:inline-block; padding:10px 20px; background:#111; color:#fff; border-radius:8px; text-decoration:none; margin-top:10px; }
+    .error { color:red; font-weight:bold; margin-top:20px; }
+    footer {
+      background: #222;
+      color: #fff;
+      padding: 30px 20px;
+      text-align: center;
+    }
+
+    footer h3 {
+      margin-bottom: 15px;
+      font-size: 20px;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 15px;
+    }
+
+    .footer-links a {
+      color: #fff;
+      font-size: 18px;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: color 0.3s;
+    }
+
+    .footer-links a:hover {
+      color: #2F03CE; 
+    }
+    .footer-links p {
+      color: #fff;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: color 0.3s;
+    }
+
+    .footer-links p:hover {
+      color: #2F03CE; 
+    }
+    .footer-address {
+      font-size: 20px;
+      color: #bbb;
+    }
+    
+    /* Floating WA */
+    .wa-btn { position:fixed; bottom:20px; left:20px; width:50px; height:50px; background:#25d366; border-radius:50%; display:flex; align-items:center; justify-content:center; z-index:4000; box-shadow:0 2px 6px rgba(0,0,0,0.3); }
+    .wa-btn img { width:30px; height:30px; }
+
+    /* Dark Mode */
+    body.dark-mode { background:#111; color:#eee; }
+    body.dark-mode header { background:#222; }
+    body.dark-mode .menu { background:#111; }
+    body.dark-mode .menu-box { background:#222; color:#eee; }
+    body.dark-mode .result { background:#222; }
+    body.dark-mode .download-btn, 
+    body.dark-mode .back-btn, 
+    body.dark-mode .url-box button { background:#eee; color:#111; }
+    body.dark-mode footer { background:#222; color:#ccc; }
+/* Override semua warna hitam ke putih saat dark mode */
+body.dark-mode .tendang2,
+body.dark-mode .dihil1,
+body.dark-mode .oups,
+body.dark-mode .tendang,
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode p,
+body.dark-mode a,
+body.dark-mode span {
+  color: #fff !important;
+}
+
+/* box popup */
+body.dark-mode .popup {
+  background: #222; /* ubah background popup jadi gelap */
+  color: #fff;
+}
+
+/* support button biar gak hitam */
+body.dark-mode .support-btn {
+  background: #fff9;
+  color: #111;
+}
+body.dark-mode .support-btn:hover {
+  background: #ddd;
+  color: #000;
+}
+body.dark-mode .back-btn, {
+  background: #fff8;
+  color: #111;
+}
+/* tombol hitam default jadi putih */
+body.dark-mode .popup button,
+body.dark-mode .url-box button,
+body.dark-mode .download-btn {
+  background: #fff;
+  color: #111;
+}
+    /* Coming Soon */
+    .coming-soon { font-size:26px; font-weight:bold; animation:pulse 1.5s infinite; margin-top:30px; }
+    @keyframes pulse { 0%{opacity:1;} 50%{opacity:0.3;} 100%{opacity:1;} }
+    .loader { margin:20px auto; width:40px; height:40px; border:5px solid #ddd; border-top:5px solid #111; border-radius:50%; animation:spin 1s linear infinite; }
+    @keyframes spin { 0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);} }
+.running-text {
+  overflow: hidden;
+  white-space: nowrap;
+  box-sizing: border-box;
+  background: #222;
+  color: #fff;
+  padding: 10px 0;
+}
+
+.running-text p {
+  display: inline-block;
+  padding-left: 100%;
+  animation: runText 12s linear infinite;
+  font-weight: bold;
+}
+
+@keyframes runText {
+  0%   { transform: translateX(0%); }
+  100% { transform: translateX(-100%); }
+}
+/* Toggle Switch */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 30px;
+  background: #444;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: 0.3s;
+  margin-top: 15px;
+}
+
+.toggle-switch .knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 26px;
+  height: 26px;
+  background: #fff;
+  border-radius: 50%;
+  transition: 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+/* aktif (light mode) */
+.toggle-switch.active {
+  background: #ffd43b;
+}
+
+.toggle-switch.active .knob {
+  left: 32px;
+}
+.wa-channel-btn {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 10px 20px;
+  background: #25d366;
+  color: #fff;
+  font-weight: bold;
+  border-radius: 8px;
+  text-decoration: none;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  transition: 0.2s;
+}
+.wa-channel-btn:hover {
+  background: #1ebd5a;
+  transform: translateY(-2px);
+}
+.support-btn {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 10px 20px;
+  background: #000;
+  color: #fff;
+  font-weight: bold;
+  border-radius: 8px;
+  text-decoration: none;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  transition: 0.2s;
+}
+.support-btn:hover {
+  background: #000;
+  transform: translateY(-2px);
+}
+
+    /* Loading Animasi */
+    .loading { text-align:center; margin-top:20px; }
+    .loading-spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #111;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+    .loading-dots {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .loading-dots div {
+      width: 8px;
+      height: 8px;
+      background: #111;
+      border-radius: 50%;
+      animation: bounce 1.2s infinite;
+    }
+    .loading-dots div:nth-child(2) { animation-delay: 0.2s; }
+    .loading-dots div:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes bounce {
+      0%, 80%, 100% { transform: scale(0.6); opacity:0.6; }
+      40% { transform: scale(1); opacity:1; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo" onclick="showPage('home')">
+      <img src="https://files.catbox.moe/4x7fwr.jpg" alt="Logo">
+      <span class="vanila">PANDA-ASSISTANT</span> <br>
+    </div>
+    <div class="hamburger" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </div>
+  </header>
+
+  <!-- Overlay -->
+  <div class="overlay" id="overlay" onclick="closeMenu()"></div>
+  <div class="overlay1" id="popupOverlay">
+    <div class="popup">
+      <h class="oups">🐼 Selamat Datang 🎉</h><hr>
+    <img src="https://files.catbox.moe/h8mpqv.png" width="300" right="400">
+      <p>Terima kasih sudah mampir ke website Panda Assistant! Website ini masi tahap pengembangan jika ada eror atau bug hubungi contact support jangan lupa dukung kita di support us</p>
+      <button onclick="closePopup()">Tutup</button>
+    </div>
+  </div>
+  <!-- Menu -->
+  <div class="menu" id="menu">
+    <h3 class="vanila">PANDA-ASSISTANT</h3><hr style="border:none; height:4px; background:white; width:100%; margin:2px auto; box-shadow:0 0 8px #fff;">
+    <a href="#" onclick="showPage('home');closeMenu()"> Home</a>
+    <a href="#" onclick="showPage('about');closeMenu()"> About Us</a>
+    <a href="#" onclick="showPage('contact');closeMenu()"> Contact Us</a>
+    <a href="#" onclick="showPage('history');closeMenu()"> History</a>
+    <a href="https://saweria.co/pandaoffc"> Support Us</a>
+<div class="toggle-switch" id="themeToggle">
+  <div class="knob">🌙</div>
+</div>
+  </div>
+
+  <!-- Home -->
+  <section id="home" class="home active-page">
+  <!-- Slider -->
+<div class="slider">
+  <div class="slides" id="slides">
+    <div class="slide"><img src="https://files.catbox.moe/k4gb28.jpg" alt="Slide 1"></div>
+    <div class="slide"><img src="https://files.catbox.moe/7l9ppw.jpg" alt="Slide 2"></div>
+    <div class="slide"><img src="https://files.catbox.moe/xgepui.jpg" alt="Slide 3"></div>
+  </div>
+  <div class="dots" id="dots"></div>
+</div>
+<div class="running-text">
+  <p class="dihil">📢 Selamat datang di website Kami! Jangan lupa support kami dengan cara click menu Support ૮(˶ᵔᵕᵔ˶)ა</p>
+</div>
+   <br> <h class="oups" style="height:50px; "style="margin-top:20px;"> Fitur Donwloader</h>
+    <div class="menu-grid">
+      <div class="menu-box" onclick="openTool('ytmp4')"><img src="https://files.catbox.moe/b08kao.jpg" alt=""><p class="tendang">YouTube MP4</p></div>
+      <div class="menu-box" onclick="openTool('ytmp3')"><img src="https://files.catbox.moe/g9i54e.jpg" alt=""><p class="tendang">YouTube MP3</p></div>
+      <div class="menu-box" onclick="openTool('instagram')"><img src="https://files.catbox.moe/e3s1ee.jpg" alt=""><p class="tendang">Instagram</p></div>
+      <div class="menu-box" onclick="openTool('tiktok')"><img src="https://files.catbox.moe/yw1id5.jpg" alt=""><p class="tendang">TikTok</p></div>
+      <div class="menu-box" onclick="openTool('spotify')"><img src="https://files.catbox.moe/5myor3.jpg" alt=""><p class="tendang">Spotify</p></div>
+      <div class="menu-box" onclick="openTool('igstalker')"><img src="https://files.catbox.moe/r8gjcg.jpg" alt=""><p class="tendang">IG Stalker</p></div>
+      <div class="menu-box" onclick="showPage('removebg')"><img src="https://files.catbox.moe/jwdjd9.png" alt=""><p class="tendang">Remove BG</p></div>
+    </div><br>
+    <hr> <h2>Nantikan Update Tools Terbaru</h2>
+     <h4>Pantau Update terbaru dan dapatkan info mengenai website kami di saluran kami!</h4> 
+      <!-- Tombol Saluran WA -->
+<div style="text-align:center;">
+  <a href="https://whatsapp.com/channel/0029VbAUhSQBVJl8ZxeN4W2h" 
+     class="wa-channel-btn" target="_blank">
+    📢 Join Saluran WhatsApp kami
+  </a>
+  </div>
+<div style="text-align:center;">
+  <a href="https://saweria.co/pandaoffc" 
+     class="support-btn" target="_blank">
+     Support Us
+  </a>
+</div>
+</section>
+  </section><hr>
+
+  <!-- Tool -->
+  <section id="tool" class="tool-page">
+  <br> <h2 class="dihil1" id="tool-title">Downloader</h2>
+    <div class="url-box">
+      <input type="text" id="urlInput" placeholder="Masukkan URL...">
+      <button onclick="processUrl()">➡︎</button>
+    </div>
+    <div id="loading" class="loading"></div>
+    <div id="error" class="error"></div>
+    <div id="result" class="result"></div>
+    <br>
+    <img src="https://files.catbox.moe/h8mpqv.png" width="350" right="500">
+    <h4>Tools ini akan membantu anda untuk Donwload video dari media sosial menggunakan link. Bukan hanya itu tools ini juga dapat membantu anda untuk kebutuhan medsos jangan lupa support developer di menu support us</h4>
+    <button class="back-btn" onclick="showPage('home')"><p class="dihil">kembali</p></button>
+  <a href="https://saweria.co/pandaoffc" 
+     class="support-btn" style="float:right;" target="_blank">
+     <p class="dihil">Support Us</p>
+  </a>
+  </section>
+
+  <!-- Remove BG -->
+ <br> <section id="removebg" class="removebg">
+    <h2 class="dihil1">Remove Background</h2>
+    <div class="coming-soon"><p class="oups">🚀 Coming Soon 🚀</p></div>
+    <div class="loader"></div>
+    <button class="back-btn" onclick="showPage('home')"><p class="dihil">kembali</p></button>
+   <a href="https://saweria.co/pandaoffc" 
+     class="support-btn" style="float:right;" target="_blank">
+     <p class="dihil">Support Us</p>
+  </a>
+  </section>
+
+  <!-- About -->
+<!-- About -->
+<section id="about" class="about">
+  <br><br> <h2 class="oups">About Us</h2>
+  <div class="box">
+    <p>Tutorial download dan cara menggunakan fitur-fitur kami dengan mudah.</p>
+    <img src="https://files.catbox.moe/frku4o.jpg" alt="Tutorial" style="max-width:100%;border-radius:12px;">
+<p>Masukan Link sosmed kalian lalu click tombol di kanan url dan video anda siap untuk di unduh</p><hr>
+    <p>Terima kasih telah menggunakan PANDA-ASSISTANT.tools ini akan membantu anda untuk Donwload video dari media sosial menggunakan link. Bukan hanya itu tools ini juga dapat membantu anda untuk kebutuhan medsos jangan lupa support developer di menu support Us.</p>
+  </div>
+    <button class="back-btn" onclick="showPage('home')"><p class="dihil">kembali</p></button>
+   <a href="https://saweria.co/pandaoffc" 
+     class="support-btn" style="float:right;" target="_blank">
+     <p class="dihil">Support Us</p>
+  </a>
+</section>
+
+  <!-- Contact -->
+  <section id="contact" class="contact">
+   <br><br> <h class="oups">Hubungi Kami</h><hr>
+    <p>Email: support.panda@gmail.com</p>
+    <p>WhatsApp: 6281529484830</p><hr>
+    <button class="back-btn" onclick="showPage('home')"><p class="dihil">kembali</p></button>
+   <a href="https://saweria.co/pandaoffc" 
+     class="support-btn" style="float:right;" target="_blank">
+     <p class="dihil">Support Us</p>
+  </a>
+  </section>
+
+  <!-- History -->
+  <section id="history" class="history">
+  <br><br> <h class="oups">Riwayat Download</h><hr>
+    <ul id="history-list"></ul><hr>
+    <button class="back-btn" onclick="showPage('home')"><p class="dihil">kembali</p></button>
+   <a href="https://saweria.co/pandaoffc" 
+     class="support-btn" style="float:right;" target="_blank">
+     <p class="dihil">Support Us</p>
+  </a>
+  </section>
+
+  <footer class="vanila">
+    <h3 style="font-size:30px;">Contact Us</h3>
+    <div class="footer-links">
+      <a href="https://wa.me/6281529484830" target="_blank"><i class='bx bxl-whatsapp'></i> <p class="tendang2">WhatsApp</p></a>
+      <a href="https://instagram.com/pakwoo_ki" target="_blank"><i class='bx bxl-instagram'></i><p class="tendang2">Instagram</p></a>
+      <a href="https://t.me/pandaoffc" target="_blank"><i class='bx bxl-telegram'></i> <p class="tendang2">Telegram</p></a>
+      <a href="https://maps.app.goo.gl/1Ya8oZcYDT42H2uF7"><i class='bx bx-map'></i> <p class="tendang2">Alamat: Bali, Indonesia</p></a>
+<a href="https://saweria.co/pandaoffc" target="_blank">
+  <i class='bx bx-dollar-circle'></i> <p class="tendang2">Support Us</p>
+</a>
+    </div> <br>
+    <div class="footer-address">
+      © 2025 Panda Assistant. All rights reserved.
+    </div>
+  </footer>
+
+  <a href="https://wa.me/6281529484830" class="wa-btn" target="_blank">
+    <img src="https://files.catbox.moe/0vh6fm.png" alt="WA">
+  </a>
+
+  <script>
+    let currentTool = "";
+
+    function toggleMenu(){ document.getElementById("menu").classList.add("active"); document.getElementById("overlay").classList.add("active"); }
+    function closeMenu(){ document.getElementById("menu").classList.remove("active"); document.getElementById("overlay").classList.remove("active"); }
+
+    function showPage(id){
+      document.querySelectorAll("section").forEach(s=>s.classList.remove("active-page"));
+      document.getElementById(id).classList.add("active-page");
+    }
+
+    function openTool(tool){
+      currentTool=tool;
+      showPage("tool");
+      document.getElementById("tool-title").innerText=tool.toUpperCase();
+      document.getElementById("urlInput").value="";
+      document.getElementById("result").innerHTML="";
+      document.getElementById("error").innerText="";
+    }
+
+    async function processUrl(){
+      const url=document.getElementById("urlInput").value.trim();
+      const loading=document.getElementById("loading");
+      const error=document.getElementById("error");
+      const result=document.getElementById("result");
+      loading.innerHTML=`<div class="loading-spinner"></div>
+                         <div class="loading-dots"><div></div><div></div><div></div></div>`;
+      error.innerText=""; result.innerHTML="";
+
+      let api="";
+      if(currentTool==="ytmp4") api=`https://api.zenzxz.my.id/downloader/ytmp4?url=${encodeURIComponent(url)}`;
+      if(currentTool==="ytmp3") api=`https://api.zenzxz.my.id/downloader/ytmp3?url=${encodeURIComponent(url)}`;
+      if(currentTool==="instagram") api=`https://api.zenzxz.my.id/downloader/instagram?url=${encodeURIComponent(url)}`;
+      if(currentTool==="tiktok") api=`https://api.zenzxz.my.id/downloader/tiktok?url=${encodeURIComponent(url)}`;
+      if(currentTool==="spotify") api=`https://api.zenzxz.my.id/downloader/spotify?url=${encodeURIComponent(url)}`;
+      if(currentTool==="igstalker") api=`https://api.zenzxz.my.id/stalker/instagram?username=${encodeURIComponent(url)}`;
+
+      try {
+        const res=await fetch(api);
+        const data=await res.json();
+        loading.innerHTML="";
+        if(!data.status){ error.innerText="Gagal memproses,Coba lagi nanti"; return; }
+
+        if(currentTool==="ytmp4"||currentTool==="ytmp3"){
+          result.innerHTML=`<h3>${data.title}</h3>
+          <img src="${data.thumbnail}" alt="">
+          <p>Durasi: ${data.duration}s</p>
+          <p>Format: ${data.format}</p>
+    <small>Developer: Panda-Official</small><br>
+          <a href="${data.download_url}" class="download-btn" target="_blank"> ❐ Download</a>
+          `;
+        }
+if (currentTool === "instagram" || currentTool === "tiktok") {
+  result.innerHTML = `<h3>Hasil:</h3>`;
+
+  // render video
+  if (data.result.videos && data.result.videos.length > 0) {
+    data.result.videos.forEach(v => {
+      result.innerHTML += `
+        <video src="${v}" controls style="max-width:100%;margin-top:10px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.2);"></video>
+        <br>
+      `;
+    });
+  }
+
+  // render foto (slider kalau banyak)
+  if (data.result.images && data.result.images.length > 0) {
+    if (data.result.images.length === 1) {
+      // kalau cuma 1 foto tampil biasa
+      result.innerHTML += `
+        <img src="${data.result.images[0]}" style="max-width:100%;margin-top:10px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.2);" />
+        <br>
+      `;
+    } else {
+      // kalau banyak, bikin slider
+      let sliderId = "slider-" + Date.now();
+      result.innerHTML += `
+        <div id="${sliderId}" class="slider" style="position:relative;max-width:100%;overflow:hidden;margin-top:10px;border-radius:10px;">
+          <div class="slides" style="display:flex;transition:transform 0.5s ease;">
+            ${data.result.images
+              .map(
+                (i) =>
+                  `<img src="${i}" style="width:100%;flex-shrink:0;border-radius:10px;" />`
+              )
+              .join("")}
+          </div>
+          <button class="prev" style="position:absolute;top:50%;left:10px;transform:translateY(-50%);background:#0008;color:#fff;border:none;border-radius:50%;padding:5px 10px;cursor:pointer;">❮</button>
+          <button class="next" style="position:absolute;top:50%;right:10px;transform:translateY(-50%);background:#0008;color:#fff;border:none;border-radius:50%;padding:5px 10px;cursor:pointer;">❯</button>
+        </div>
+        <br>
+      `;
+
+      // tambahin JS slider
+      setTimeout(() => {
+        const slider = document.getElementById(sliderId);
+        const slides = slider.querySelector(".slides");
+        const imgs = slider.querySelectorAll("img");
+        let index = 0;
+
+        slider.querySelector(".prev").onclick = () => {
+          index = (index - 1 + imgs.length) % imgs.length;
+          slides.style.transform = `translateX(-${index * 100}%)`;
+        };
+        slider.querySelector(".next").onclick = () => {
+          index = (index + 1) % imgs.length;
+          slides.style.transform = `translateX(-${index * 100}%)`;
+        };
+      }, 100);
+    }
+  }
+
+  // credit developer
+  result.innerHTML += `<small>Developer: Panda-Official</small>`;
+
+
+  // render foto
+  if (data.result.images && data.result.images.length > 0) {
+    data.result.images.forEach(i => {
+      result.innerHTML += `
+        <img src="${i}" style="max-width:100%;margin-top:10px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.2);" />
+        <br>
+      `;
+    });
+  }
+
+  // credit developer
+  result.innerHTML += `<small>Developer: Panda-Official</small>`;
+}
+        if(currentTool==="spotify"){
+          result.innerHTML=`<h3>${data.result.title}</h3>
+          <p>Artist: ${data.result.artist}</p>
+          <img src="${data.result.thumbnail}" alt="">
+      <small>Developer: Panda-Official</small><br>
+          <a href="${data.result.downloadUrl}" class="download-btn" target="_blank">❐ Download</a>
+          `;
+        }
+if (currentTool === "igstalker") {
+  if (data.status) {
+    result.innerHTML = `
+      <h3>${data.result.name} (@${data.result.username})</h3>
+      <img src="${data.result.profile_pic}" alt="${data.result.username}" width="120" style="border-radius:10px; margin:10px 0;" />
+      <p><b>Bio:</b> ${data.result.bio}</p>
+      <p><b>Followers:</b> ${data.result.followers}</p>
+      <p><b>Following:</b> ${data.result.following}</p>
+      <p><b>Posts:</b> ${data.result.posts}</p>
+      <p><b>Verified:</b> ${data.result.verified ? "✅ Ya" : "❌ Tidak"}</p>
+      <p><b>Engagement Rate:</b> ${data.result.engagement_rate}%</p>
+      <small>Developer: Panda-Official</small>
+    `;
+  } else {
+    result.innerHTML = `<p>Gagal mengambil data.</p>`;
+  }
+}
+        // simpan history
+        const list=document.getElementById("history-list");
+        const li=document.createElement("li");
+        li.innerText=`[${currentTool}] ${url}`;
+        list.appendChild(li);
+
+      } catch(e){
+        loading.innerHTML=""; error.innerText="Error: "+e.message;
+      }
+    }
+// SLIDER
+let currentIndex = 0;
+const slides = document.getElementById("slides");
+const dotsContainer = document.getElementById("dots");
+const totalSlides = slides.children.length;
+
+// buat dot sesuai jumlah slide
+for (let i = 0; i < totalSlides; i++) {
+  const dot = document.createElement("span");
+  dot.addEventListener("click", () => goToSlide(i));
+  dotsContainer.appendChild(dot);
+}
+const dots = dotsContainer.querySelectorAll("span");
+
+function updateSlider() {
+  slides.style.transform = `translateX(-${currentIndex * 100}%)`;
+  dots.forEach((dot, idx) => {
+    dot.classList.toggle("active", idx === currentIndex);
+  });
+}
+
+function goToSlide(index) {
+  currentIndex = index;
+  updateSlider();
+  resetAutoSlide();
+}
+
+// auto slide tiap 5 detik
+let autoSlide = setInterval(nextSlide, 5000);
+
+function nextSlide() {
+  currentIndex = (currentIndex + 1) % totalSlides;
+  updateSlider();
+}
+
+function resetAutoSlide() {
+  clearInterval(autoSlide);
+  autoSlide = setInterval(nextSlide, 5000);
+}
+    // Munculin popup otomatis pas halaman dibuka
+    window.onload = function() {
+      document.getElementById("popupOverlay").style.display = "flex";
+    }
+
+    function closePopup() {
+      document.getElementById("popupOverlay").style.display = "none";
+    }
+// inisialisasi
+updateSlider();
+// Dark Mode
+const themeToggle = document.getElementById("themeToggle");
+const knob = themeToggle.querySelector(".knob");
+
+themeToggle.onclick = () => {
+  document.body.classList.toggle("dark-mode");
+  themeToggle.classList.toggle("active");
+
+  if (document.body.classList.contains("dark-mode")) {
+    knob.innerText = "☀️";
+    localStorage.setItem("theme", "dark");
+  } else {
+    knob.innerText = "🌙";
+    localStorage.setItem("theme", "light");
+  }
+};
+
+// apply saved theme
+if (localStorage.getItem("theme") === "dark") {
+  document.body.classList.add("dark-mode");
+  themeToggle.classList.add("active");
+  knob.innerText = "☀️";
+}
+  </script>
+</body>
+</html>
